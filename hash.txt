@@ -1,0 +1,28 @@
+
+//Add to HTML
+<script src="node_modules/crypto-js/crypto-js.js"></script>
+
+//npm install
+npm install crypto-js
+
+//Hash
+function hashData(data) {
+    return crypto.subtle.digest("SHA-256", new TextEncoder().encode(data))
+      .then(h => {
+        const hashArray = Array.from(new Uint8Array(h));
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        return hashHex;
+      })
+      .catch(console.error);
+  }
+//import CryptoJS
+//DES
+    function encryptData(data, key) {
+    const encrypted = CryptoJS.DES.encrypt(data, key).toString();
+    return encrypted;
+  }
+  
+  function decryptData(encryptedData, key) {
+    const decrypted = CryptoJS.DES.decrypt(encryptedData, key).toString(CryptoJS.enc.Utf8);
+    return decrypted;
+  }
