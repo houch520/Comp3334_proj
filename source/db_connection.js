@@ -1,6 +1,6 @@
 console.log("initialize db_connection module");
 var mysql = require('mysql');
-module.exports.connection = () => {
+module.exports.dbconnection = () => {
     return new Promise((resolve, reject)=>{
         var con = mysql.createConnection({
             connectionLimit:100,

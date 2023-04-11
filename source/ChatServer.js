@@ -5,6 +5,8 @@ var WebSocketServer = require('websocket').server;
 var http = require('http');
 var url = require('url');
 var fs = require('fs');
+//Include connection to mysql database
+//var {dbconnection,closeConnection}= require('./db_connection.js');
 
 //Varables to store the connection and array of clients
 var connections = [];

@@ -1,11 +1,11 @@
-var {connection,closeConnection}= require('./db_connection.js');
+var {dbconnection,closeConnection}= require('./db_connection.js');
 
 //modify tables
 //users
 //get number of rows in userTable
 function createUserID(){//update later(generate hash with entry index)
     return new Promise((resolve, reject)=>{
-        connection().then((con)=>{
+        dbconnection().then((con)=>{
             con.query("SELECT * FROM `user`",function (err, data) {
             if (err) throw err;
             var numRows=data.length;
@@ -18,7 +18,7 @@ function createUserID(){//update later(generate hash with entry index)
 
 }
 function addNewUser(uName, passsword, email, key){
-    connection().then((con)=>{
+    dbconnection().then((con)=>{
         createUserID().then((uid)=>{
             var sql = "INSERT INTO `user` (`UserID`, `UserName`, `Userpassword`, `email`, `verification_Key`, `last_login`) VALUES (?,?,MD5(?),?,?,Now())";
             con.query(sql, [uid, uName, passsword, email, key],function (err, data) {
@@ -31,7 +31,7 @@ function addNewUser(uName, passsword, email, key){
 }
 
 function removeUser(uid){
-    connection().then((con)=>{
+    dbconnection().then((con)=>{
         var sql = "DELETE FROM `user` WHERE `user`.`UserID` = ?";
         con.query(sql, [uid],function (err, data) {
             if (err) throw err;
@@ -43,7 +43,7 @@ function removeUser(uid){
 
 
 function updateUserName(uid, userName){
-    connection().then((con)=>{
+    dbconnection().then((con)=>{
         var sql = "UPDATE `user` SET `UserName` = ? WHERE `user`.`UserID` = ?;";
         con.query(sql, [userName, uid],function (err, data) {
             if (err) throw err;
@@ -53,7 +53,7 @@ function updateUserName(uid, userName){
     });
 }
 function updateUserPassword(uid, password){
-    connection().then((con)=>{
+    dbconnection().then((con)=>{
         var sql = "UPDATE `user` SET `Userpassword` = ? WHERE `user`.`UserID` = MD5(?);";
         con.query(sql, [password, uid],function (err, data) {
             if (err) throw err;
@@ -63,7 +63,7 @@ function updateUserPassword(uid, password){
     });
 }
 function updateVerificationKey(uid, key){
-    connection().then((con)=>{
+    dbconnection().then((con)=>{
         var sql = "UPDATE `user` SET `verification_Key` = ? WHERE `user`.`UserID` = ?;";
         con.query(sql, [key, uid],function (err, data) {
             if (err) throw err;
@@ -73,7 +73,7 @@ function updateVerificationKey(uid, key){
     });
 }
 function updateLastLogin(uid){//update last_login date
-    connection().then((con)=>{
+    dbconnection().then((con)=>{
         var sql = "UPDATE `user` SET `last_login` = Now() WHERE `user`.`UserID` = ?";
         con.query(sql, [uid],function (err, data) {
             if (err) throw err;
@@ -85,7 +85,7 @@ function updateLastLogin(uid){//update last_login date
 
 //chatroom
 function insertChatroom(crID, crName){
-    connection().then((con)=>{
+    dbconnection().then((con)=>{
         var sql = "INSERT INTO `chatroom` (`ChatroomID`, `ChatroomName`) VALUES (?, ?)";
         con.query(sql, [crID, crName],function (err, data) {
             if (err) throw err;
@@ -95,7 +95,7 @@ function insertChatroom(crID, crName){
     });
 }
 function removeChatroom(crID){
-    connection().then((con)=>{
+    dbconnection().then((con)=>{
         var sql = "DELETE FROM`chatroom` WHERE `chatroom`.`ChatroomID` = ?";
         con.query(sql, [crID],function (err, data) {
             if (err) throw err;
@@ -105,7 +105,7 @@ function removeChatroom(crID){
     });
 }
 function updateChatroomName(crID, crName){
-    connection().then((con)=>{
+    dbconnection().then((con)=>{
         var sql = "UPDATE `chatroom` SET `ChatroomName` = ? WHERE `chatroom`.`ChatroomID` = ?";
         con.query(sql, [crName,crID],function (err, data) {
             if (err) throw err;
@@ -116,7 +116,7 @@ function updateChatroomName(crID, crName){
 }
 //member
 function insertMember(crID, uid, admin){
-    connection().then((con)=>{
+    dbconnection().then((con)=>{
         var sql = "INSERT INTO `member` (`ChatroomID`, `UserID`, `admin`) VALUES (?,?,?)";
         con.query(sql, [crID, uid, admin],function (err, data) {
             if (err) throw err;
@@ -126,7 +126,7 @@ function insertMember(crID, uid, admin){
     });
 };
 function removeMember(crID, uid){ //removeMember/quit chatroom: 
-    connection().then((con)=>{
+    dbconnection().then((con)=>{
         var sql = "DELETE FROM `member` WHERE `ChatroomID`=? AND `UserID`=?";
         con.query(sql, [crID, uid],function (err, data) {
             if (err) throw err;
@@ -136,7 +136,7 @@ function removeMember(crID, uid){ //removeMember/quit chatroom:
     });
 }
 function updateMember(crID, uid, admin){ //admin=1: admin, admin=0: ordinary member
-    connection().then((con)=>{
+    dbconnection().then((con)=>{
         var sql = "UPDATE `member` SET `admin`=? WHERE `ChatroomID`=? AND `UserID`=?";
         con.query(sql, [admin,crID, uid],function (err, data) {
             if (err) throw err;
@@ -153,7 +153,7 @@ function checkEmail(email){
     return new Promise((resolve, reject)=>{
         var numRows = 0;
         var sql =" SELECT * FROM `user` WHERE `email` = ?";
-        connection().then((con)=>{
+        dbconnection().then((con)=>{
             con.query(sql,[email],function (err, data) {
             if (err) throw err;
             numRows=data.length;
@@ -168,7 +168,7 @@ function checkEmail_Password_Pair(email, password){
     return new Promise((resolve, reject)=>{
         var uid = -1;
         var sql =" SELECT * FROM `user` WHERE `email` = ? AND `Userpassword` = MD5(?)";
-        connection().then((con)=>{
+        dbconnection().then((con)=>{
             con.query(sql,[email, password],function (err, data) {
             if (err) throw err;
             // iterate for all the rows in result
@@ -186,7 +186,7 @@ function checkVerificationKey(key){
     return new Promise((resolve, reject)=>{
         var numRows = 0;
         var sql =" SELECT * FROM `user` WHERE `verification_Key` = ?";
-        connection().then((con)=>{
+        dbconnection().then((con)=>{
             con.query(sql,[key],function (err, data) {
             if (err) throw err;
             numRows=data.length;
@@ -202,7 +202,7 @@ function getChatroomListbyUID(uid){
     return new Promise((resolve, reject)=>{
         var chatrooms=[];
         var sql ="SELECT * FROM `member` WHERE `UserID`= ?";
-        connection().then((con)=>{
+        dbconnection().then((con)=>{
             con.query(sql,[uid],function (err, data) {
             if (err) throw err;
             // iterate for all the rows in result
@@ -220,7 +220,7 @@ function getMemberlistbyChatroomID(crid){
     return new Promise((resolve, reject)=>{
         var members=[];
         var sql ="SELECT * FROM `member` WHERE `ChatroomID`= ?";
-        connection().then((con)=>{
+        dbconnection().then((con)=>{
             con.query(sql,[crid],function (err, data) {
             if (err) throw err;
             // iterate for all the rows in result
