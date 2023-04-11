@@ -4,6 +4,7 @@
   "main": "ChatServer.js",
   "private": true,
   "dependencies": {
+    "crypto-js": "^4.1.1",
     "debug": "2.6.9",
     "is-typedarray": "1.0.0",
     "ms": "2.0.0",
