@@ -5,6 +5,7 @@ var input = document.querySelector(".sd_msg");
 var input_un = document.querySelector(".in_un");
 
 var button_login = document.querySelector(".login_btn");
+var button_signup = document.querySelector(".signup_btn");
 
 var div_msg = document.querySelector(".msg");
 var div_login = document.querySelector(".loggin");
@@ -23,6 +24,10 @@ div_container.style.display	='none';
 
 button_login.addEventListener("click",function(event){
 	if(checkBox()) login();
+});
+
+button_signup.addEventListener("click",function(event){
+	window.location="signup1.html";
 });
 
 document.addEventListener("keydown",function(event)

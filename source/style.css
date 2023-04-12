@@ -244,7 +244,7 @@ hr {
 }
 
 
-.loggin{
+.loggin, .signup1{
   margin:10px;
   padding: 5px;
   background-image: url("img/login-background.jpg");
@@ -260,7 +260,7 @@ hr {
 .in_un{
   width:50%;
 }
-.login_btn{
+.login_btn, .sendemail_btn{
   width:51.8%;
   background-color: darkgreen;
   border: none;
@@ -275,9 +275,9 @@ hr {
   cursor: pointer;
 }
 
-.login_btn:hover {opacity: 1}
+.login_btn:hover, .signup_btn:hover, .sendemail_btn {opacity: 1}
 
-.signup_btn{
+.signup_btn, .back_btn{
   width:51.8%;
   background-color: rgb(0, 158, 250);
   border: none;
@@ -291,8 +291,6 @@ hr {
   text-decoration: none;
   cursor: pointer;
 }
-
-.signup_btn:hover {opacity: 1}
 
 .input_container{
   text-align: center;
