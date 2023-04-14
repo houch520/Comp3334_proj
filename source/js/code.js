@@ -4,8 +4,8 @@
 var input = document.querySelector(".sd_msg");
 var input_un = document.querySelector(".in_un");
 
-var button_login = document.querySelector(".login_btn");
 var button_signup = document.querySelector(".signup_btn");
+var button_login = document.querySelector(".login_btn");
 
 var div_msg = document.querySelector(".msg");
 var div_login = document.querySelector(".loggin");
@@ -20,7 +20,6 @@ var Usuario = null;
 var renderuser = false; //for rendering the user
 
 //Hide chat during login page
-div_container.style.display	='none';
 
 button_login.addEventListener("click",function(event){
 	if(checkBox()) login();

@@ -275,7 +275,7 @@ hr {
   cursor: pointer;
 }
 
-.login_btn:hover, .signup_btn:hover, .sendemail_btn {opacity: 1}
+.login_btn:hover, .signup_btn:hover, .sendemail_btn:hover, .back_btn:hover {opacity: 1}
 
 .signup_btn, .back_btn{
   width:51.8%;
