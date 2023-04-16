@@ -257,7 +257,7 @@ hr {
   text-align: center;
 }
 
-.in_un{
+.in_un, .in_pw, .in_email{
   width:50%;
 }
 .login_btn, .sendemail_btn{

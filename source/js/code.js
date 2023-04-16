@@ -1,8 +1,10 @@
 //Here we handle all the chat algorithm
 
 //Variables from the DOM
+//need retrieve username from db
 var input = document.querySelector(".sd_msg");
 var input_un = document.querySelector(".in_un");
+var input_pw = document.querySelector(".in_pw");
 
 var button_signup = document.querySelector(".signup_btn");
 var button_login = document.querySelector(".login_btn");
@@ -11,6 +13,9 @@ var div_msg = document.querySelector(".msg");
 var div_login = document.querySelector(".loggin");
 var div_container = document.querySelector(".container");
 var div_header = document.querySelector(".header");
+
+//hide chatbox
+div_container.style.display="none";
 
 //Chat connection to the server
 var server = new ChatClient();
@@ -77,7 +82,11 @@ function showMessage(classname,msg){
 function checkBox(){
 	if (input_un.value.length == 0)
 	{
-		alert("You forgot to choose a username dumbass");
+		alert("Please enter your email.");
+		return false;
+	} else if (input_pw.value.length == 0)
+	{
+		alert("Please enter your password.");
 		return false;
 	}
 	return true;
