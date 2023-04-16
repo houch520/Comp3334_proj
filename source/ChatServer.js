@@ -25,49 +25,63 @@ function Client(username,connection,id,p,c){
 }
 
 //Create HTTP Server - Since we are using WebSockets, we just need it to use HTTP Requests/Responses
+
 var server = http.createServer(function(request, response) {
     var q = url.parse(request.url,true);
 
-    console.log(q.query.verKey);
+    //console.log(q.query.verKey);
+    var normalReq = true;
+    console.log("Looking for: "+q.pathname);
+    if (q.pathname=="/") {   
+        q.pathname="/index.html";    
+        if(q.query.verKey) {
+            normalReq=false;
+            console.log("received verify key request");
+            var verKey = q.query.verKey;
+            console.log("verKey=",verKey);       
+            dbFcn.checkVerificationKey(verKey).then((result)=>{
+                console.log("result=",result);
+                if (result){
+                    response.writeHead(302, {
+                        'Location': '/signup2.html?verKey=' + verKey
+                    });
+                }
+                else{
+                    if (result){
+                        response.writeHead(302, {'Location': '/index.html'});                        
+                    }
+                }
+                return response.end();
+            });
+        }  
+    }
+    if (normalReq){
 
-    //console.log("Looking for: "+q.pathname);
-    fs.readFile("."+q.pathname,function(err,data){
-        if(err){
-            response.writeHead(404,{'Content-Type':'text/html'});
-            return response.end("404 Not Found");
-        }
-        if(q.pathname.includes(".html")){
-            response.writeHead(200,{'Content-Type':'text/html'});
-        }
-        else if(q.pathname.includes(".css")){
-            response.writeHead(200,{'Content-Type':'text/css'});
-        }
-        else if(q.pathname.includes(".js")){
-            response.writeHead(200,{'Content-Type':'text/javascript'});
-        }
-        else if(q.pathname.includes(".jpg")){
-            response.writeHead(200,{'Content-Type':'image/jpeg'});
-        }
-        response.write(data);
-        return response.end();
-    })
-    //console.log((new Date()) + ' Received request for ' + request.url);
         
-    if(q.query.verKey) {
-        console.log("received verify key request");
-        var verKey = q.query.verKey;
-        console.log("verKey=",verKey);
-        
-        response.writeHead(200,{'Content-Type':'text/html'});
-        response.write('<html><body>This is Home Page.</body></html>');
-        response.end();
-        dbFcn.checkVerificationKey(verKey).then((result)=>{
-            console.log("result=",result);
-            if (result){
-                
+        fs.readFile("."+q.pathname,function(err,data){
+            if(err){
+                response.writeHead(404,{'Content-Type':'text/html'});
+                return response.end("404 Not Found");
             }
+            if(q.pathname.includes(".html")){
+                response.writeHead(200,{'Content-Type':'text/html'});
+            }
+            else if(q.pathname.includes(".css")){
+                response.writeHead(200,{'Content-Type':'text/css'});
+            }
+            else if(q.pathname.includes(".js")){
+                response.writeHead(200,{'Content-Type':'text/javascript'});
+            }
+            else if(q.pathname.includes(".jpg")){
+                response.writeHead(200,{'Content-Type':'image/jpeg'});
+            }
+            response.write(data);
+            return response.end();
         })
     }
+    //console.log((new Date()) + ' Received request for ' + request.url);
+        
+    
 });
 server.listen(9026, function() {
     console.log("["+ new Date()+"]" + "Server is listening on port 9026");
@@ -119,22 +133,25 @@ ws.on("request", function(request) {
             
             if (data.type =="signUp"){       
                 console.log(data.msg);
-                /*
+                
                 dbFcn.checkEmail(data.msg).then((result)=>{
                     console.log("result=",result);
-                    if (result){
-                        */
+                    if (result){                        
                         var verKey=CryptoJS.lib.WordArray.random(4).toString(CryptoJS.enc.Hex);
                         console.log("random key = ",verKey);
                         dbFcn.addNewUser("userName","password",data.msg,verKey);
                         console.log("added new user");
-                        /*
                     }
                     else{console.log("email already existed");}
-                })*/
+                })
                 //send link to email
             }            
-            
+            if (data.type =="signUp2"){
+                console.log("key=",data.key);
+                console.log("name=",data.name);
+                console.log("pw=",data.password);                
+                dbFcn.registerUserInformation(data.key, data.name, data.password);
+            }
 
             //Check Distance to decide to whom send broadcast of message
             if(data.type == "message"){

@@ -2,13 +2,15 @@
 2. server: check email: not exist 
     -> insert user: uid, email, verification key(done)
     -> send link to email(tbd)
-
+    link=localhost/signup2.html?key= verKey
+//redirect to http://localhost:9026/signup2.html?verKey=123
 //localhost:key=???
 3. click link(prefix, key=????)
-    -> sign up form
+    -> sign up form//
     -> server: handle verifyKey request 
                 -> key exist
-                -> redirect to sign up form 2, uid= returned uid
+                -> redirect to sign up form 2, uid= returned uid//
+                
 4. signup form2(url:uid):
     - password, username
 5. server: update password, username, verification_Key=NULL by uid

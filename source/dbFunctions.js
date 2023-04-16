@@ -13,7 +13,7 @@ function createUserID(){//update later(generate hash with entry index)
     });
 }
 
-module.exports={
+var self = module.exports={
 
 //modify tables
 //users
@@ -30,7 +30,6 @@ module.exports={
             });
         });
     },
-
     removeUser: function(uid){
         dbconnection().then((con)=>{
             var sql = "DELETE FROM `user` WHERE `user`.`UserID` = ?";
@@ -41,8 +40,6 @@ module.exports={
             });
         });
     },
-
-
     updateUserName: function (uid, userName){
         dbconnection().then((con)=>{
             var sql = "UPDATE `user` SET `UserName` = ? WHERE `user`.`UserID` = ?;";
@@ -166,7 +163,7 @@ module.exports={
             }); 
         })
     },
-    checkEmail_Password_Pair: function (email, password){
+    checkEmail_Password_Pair: function (email, password){//login function
         //return UserID if there exist a email-password pair, else -1
         return new Promise((resolve, reject)=>{
             var uid = -1;
@@ -198,6 +195,25 @@ module.exports={
                 });
             }); 
         })
+    },
+
+    getUIDbyKey: function(key){
+        return new Promise((resolve, reject)=>{
+            var uid="";
+            var sql =" SELECT * FROM `user` WHERE `verification_Key` = ?";
+            dbconnection().then((con)=>{
+                con.query(sql,[key],function (err, data) {
+                if (err) throw err;
+                // iterate for all the rows in result
+                Object.keys(data).forEach(function(key) {
+                    uid = data[key].UserID;
+                });
+                closeConnection(con);
+                resolve(uid);
+                });
+            }); 
+        });
+
     },
 
     //member
@@ -235,6 +251,19 @@ module.exports={
                 });
             }); 
         });
+    },
+    registerUserInformation: function(key, name, pw){
+        console.log("call registeruser infor");
+        self.getUIDbyKey(key).then((result)=>{
+            console.log("user id of key=",key,":", result, "no. of chatrooms= ",result.length);
+            if (result.length!=0){
+                var newKey='';
+                this.updateUserName(result, name);
+                this.updateUserPassword(result,pw);
+                this.updateVerificationKey(result,newKey);
+            }
+        })
+        return true;
     }
 }
 /*
@@ -261,9 +290,13 @@ getChatroomListbyUID("0").then((result)=>{
 })
 */
 
+
 //sign-up
 //check if email not exist => get rows by email => t: sign-up
 //check if the verification key exists => get rows by verification key => t: can signup
+/*
+var functions = require('./dbFunctions.js')
+functions.registerUserInformation('47e5550b',"emili","mypw");*/
 
 
 //sign-in

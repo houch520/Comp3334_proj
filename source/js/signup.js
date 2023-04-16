@@ -17,6 +17,7 @@ button_sendemail.addEventListener("click",function(event){
 	if (checkEmail(email)) signup(email.value);
 });
 
+
 function checkEmail(email){
 	var re= /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 	if (email.value.length == 0){
@@ -34,7 +35,6 @@ function signup(email){
 		//Connect to the chat room
 		server.connect("localhost:9026",email);
 		console.log(email);
-	
 		//////////////////////////////////////////////////////////////////////////////////////////
 		//CALLBACKS FOR WEBSOCKETSERVER
 		//The first thing when extablishes connection. It sends the user information to the server
@@ -51,5 +51,7 @@ function signup(email){
 		}
 
 }
+
+
 
 
