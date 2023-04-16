@@ -10,7 +10,7 @@ var button_sendemail = document.querySelector(".sendemail_btn");
 var server = new ChatClient();
 
 button_back.addEventListener("click",function(event){
-	history.back();
+	window.location="index.html";
 });
 
 button_sendemail.addEventListener("click",function(event){

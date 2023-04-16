@@ -257,10 +257,10 @@ hr {
   text-align: center;
 }
 
-.in_un, .in_pw, .in_email{
+.in_un, .in_pw, .in_email, .in_username{
   width:50%;
 }
-.login_btn, .sendemail_btn{
+.login_btn, .sendemail_btn, .save_btn{
   width:51.8%;
   background-color: darkgreen;
   border: none;
@@ -275,7 +275,7 @@ hr {
   cursor: pointer;
 }
 
-.login_btn:hover, .signup_btn:hover, .sendemail_btn:hover, .back_btn:hover {opacity: 1}
+.login_btn:hover, .signup_btn:hover, .sendemail_btn:hover, .back_btn:hover, .save_btn:hover {opacity: 1}
 
 .signup_btn, .back_btn{
   width:51.8%;
