@@ -1,0 +1,18 @@
+1. client: send email // signup1.html?
+2. server: check email: not exist 
+    -> insert user: uid, email, verification key
+    -> send link to email
+3. click link(prefix, key=????)
+    -> sign up form
+    -> server: handle verifyKey request 
+                -> key exist, return uid
+                -> redirect to sign up form 2, uid= returned uid
+4. signup form2(url:uid):
+    - password, username
+5. server: update password, username, verification_Key=NULL by uid
+
+
+
+login:
+1. client: send email, password
+2. server: call function

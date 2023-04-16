@@ -72,10 +72,15 @@ ws.on("request", function(request) {
         for(var i=0; i<clients.length;i++)
             connection.sendUTF(JSON.stringify({type:"USERS",id:clients[i].userID,
                 p:clients[i].position,c:clients[i].c}));
-    
+                
+    //authentication
 
-    var id = connections.push(connection) - 1; // ID of the connected user
+    //
     
+    //set attributes value for user
+    var id = connections.push(connection) - 1; // ID of the connected user
+
+
     //Values of the cube
     var position = getRandomPosition();
     var c = getRandomColor();
@@ -90,7 +95,6 @@ ws.on("request", function(request) {
 
     //Messages from the user
     connection.on('message', function(message) {
-
         if (message.type === 'utf8') {
             var data = JSON.parse(message.utf8Data);
             //console.log("Received message " + JSON.stringify(data));

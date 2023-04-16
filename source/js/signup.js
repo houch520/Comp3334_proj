@@ -21,6 +21,7 @@ function checkEmail(email){
 		return false;
 	} else if (re.test(email.value)) {
 		alert("Email sent! Please check your mailbox.");
+		//call function, send email to server
 		return true;
 	}
 	alert("Please check your email format.");
