@@ -7,7 +7,7 @@ var button_back = document.querySelector(".back_btn");
 var button_sendemail = document.querySelector(".sendemail_btn");
 
 button_back.addEventListener("click",function(event){
-	history.back();
+	window.location="index.html";
 });
 
 button_sendemail.addEventListener("click",function(event){
