@@ -6,12 +6,15 @@ var email = document.querySelector(".in_email");
 var button_back = document.querySelector(".back_btn");
 var button_sendemail = document.querySelector(".sendemail_btn");
 
+//Chat connection to the server
+var server = new ChatClient();
+
 button_back.addEventListener("click",function(event){
 	history.back();
 });
 
 button_sendemail.addEventListener("click",function(event){
-	if (checkEmail(email)) signup();
+	if (checkEmail(email)) signup(email.value);
 });
 
 function checkEmail(email){
@@ -21,15 +24,31 @@ function checkEmail(email){
 		return false;
 	} else if (re.test(email.value)) {
 		alert("Email sent! Please check your mailbox.");
-		//call function, send email to server
 		return true;
 	}
 	alert("Please check your email format.");
 	return false;
 }
 
-function signup(email){
-
+function signup(email){	
+		//Connect to the chat room
+		server.connect("localhost:9026",email);
+		console.log(email);
+	
+		//////////////////////////////////////////////////////////////////////////////////////////
+		//CALLBACKS FOR WEBSOCKETSERVER
+		//The first thing when extablishes connection. It sends the user information to the server
+		server.connection.onopen = function(event){
+			var data = {
+				 type: "signUp",
+				 msg: email
+			};
+			server.connection.send(JSON.stringify(data));
+		}		
+		//Closing the websocket server
+		server.connection.onclose= function(){
+			server.connection.close();
+		}
 
 }
 

@@ -1,11 +1,13 @@
-1. client: send email // signup1.html?
+1. client: send email(done)
 2. server: check email: not exist 
-    -> insert user: uid, email, verification key
-    -> send link to email
+    -> insert user: uid, email, verification key(done)
+    -> send link to email(tbd)
+
+//localhost:key=???
 3. click link(prefix, key=????)
     -> sign up form
     -> server: handle verifyKey request 
-                -> key exist, return uid
+                -> key exist
                 -> redirect to sign up form 2, uid= returned uid
 4. signup form2(url:uid):
     - password, username
@@ -16,3 +18,10 @@
 login:
 1. client: send email, password
 2. server: call function
+
+//server
+data 
+type:"email_reg"
+
+//dbFcn
+//dbconnection

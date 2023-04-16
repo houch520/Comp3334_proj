@@ -1,5 +1,6 @@
 //NodeJS code on server side // 
 
+const CryptoJS = require("crypto-js");
 //Include 'websocket' and 'http' NodeJS modules
 var WebSocketServer = require('websocket').server;
 var http = require('http');
@@ -7,6 +8,7 @@ var url = require('url');
 var fs = require('fs');
 //Include connection to mysql database
 //var {dbconnection,closeConnection}= require('./db_connection.js');
+const dbFcn= require('./dbFunctions.js');
 
 //Varables to store the connection and array of clients
 var connections = [];
@@ -25,7 +27,10 @@ function Client(username,connection,id,p,c){
 //Create HTTP Server - Since we are using WebSockets, we just need it to use HTTP Requests/Responses
 var server = http.createServer(function(request, response) {
     var q = url.parse(request.url,true);
-   // console.log("Looking for: "+q.pathname);
+
+    console.log(q.query.verKey);
+
+    //console.log("Looking for: "+q.pathname);
     fs.readFile("."+q.pathname,function(err,data){
         if(err){
             response.writeHead(404,{'Content-Type':'text/html'});
@@ -47,6 +52,22 @@ var server = http.createServer(function(request, response) {
         return response.end();
     })
     //console.log((new Date()) + ' Received request for ' + request.url);
+        
+    if(q.query.verKey) {
+        console.log("received verify key request");
+        var verKey = q.query.verKey;
+        console.log("verKey=",verKey);
+        
+        response.writeHead(200,{'Content-Type':'text/html'});
+        response.write('<html><body>This is Home Page.</body></html>');
+        response.end();
+        dbFcn.checkVerificationKey(verKey).then((result)=>{
+            console.log("result=",result);
+            if (result){
+                
+            }
+        })
+    }
 });
 server.listen(9026, function() {
     console.log("["+ new Date()+"]" + "Server is listening on port 9026");
@@ -72,10 +93,6 @@ ws.on("request", function(request) {
         for(var i=0; i<clients.length;i++)
             connection.sendUTF(JSON.stringify({type:"USERS",id:clients[i].userID,
                 p:clients[i].position,c:clients[i].c}));
-                
-    //authentication
-
-    //
     
     //set attributes value for user
     var id = connections.push(connection) - 1; // ID of the connected user
@@ -97,7 +114,27 @@ ws.on("request", function(request) {
     connection.on('message', function(message) {
         if (message.type === 'utf8') {
             var data = JSON.parse(message.utf8Data);
-            //console.log("Received message " + JSON.stringify(data));
+            console.log("Received message " + JSON.stringify(data));
+            //check signUp request
+            
+            if (data.type =="signUp"){       
+                console.log(data.msg);
+                /*
+                dbFcn.checkEmail(data.msg).then((result)=>{
+                    console.log("result=",result);
+                    if (result){
+                        */
+                        var verKey=CryptoJS.lib.WordArray.random(4).toString(CryptoJS.enc.Hex);
+                        console.log("random key = ",verKey);
+                        dbFcn.addNewUser("userName","password",data.msg,verKey);
+                        console.log("added new user");
+                        /*
+                    }
+                    else{console.log("email already existed");}
+                })*/
+                //send link to email
+            }            
+            
 
             //Check Distance to decide to whom send broadcast of message
             if(data.type == "message"){
