@@ -11,8 +11,10 @@ module.exports.dbconnection = () => {
         });
         con.connect((err)=>{
             if (err) throw err;
-            console.log("Connected");
-            resolve(con);
+            else{
+                console.log("Connected");
+                resolve(con);
+            }            
         })
     })
 }
