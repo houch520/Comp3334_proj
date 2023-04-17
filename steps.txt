@@ -9,7 +9,9 @@
     -> sign up form//
     -> server: handle verifyKey request 
                 -> key exist
-                -> redirect to sign up form 2, uid= returned uid//
+                    -> redirect to sign up form 2, uid= returned uid//
+                -> not exist:
+                    -> don't update
                 
 4. signup form2(url:uid):
     - password, username
@@ -21,9 +23,8 @@ login:
 1. client: send email, password
 2. server: call function
 
-//server
-data 
-type:"email_reg"
+//note:
+- message checking: max. character = 100
+- encryption, decryption
 
-//dbFcn
-//dbconnection
+- database: script detection & removal
