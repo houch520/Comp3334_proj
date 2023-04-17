@@ -34,7 +34,7 @@ function inputPreprocessing(str, limit){
     str = str.replace( /(<([^>]+)>)/ig, '');
     //length check
     if (str.length>= limit) str = str.slice(0, limit-1);
-    console.log("processed string = ", str, "length = ", str.length);
+    //console.log("processed string = ", str, "length = ", str.length);
 
     return str;
 }
@@ -246,7 +246,8 @@ var self = module.exports={
         })
     },
     getUIDbyKey: function(key){
-        key=nonPwCheck(key);      
+        key=nonPwCheck(key);
+        console.log("key=", key);      
         return new Promise((resolve, reject)=>{
             var uid="";
             var sql =" SELECT * FROM `user` WHERE `verification_Key` = ?";
@@ -258,6 +259,7 @@ var self = module.exports={
                     uid = data[key].UserID;
                 });
                 closeConnection(con);
+                console.log("uid=", uid);
                 resolve(uid);
                 });
             }); 
@@ -278,6 +280,25 @@ var self = module.exports={
                 });
                 closeConnection(con);
                 resolve(uName);
+                });
+            }); 
+        });
+
+    },
+    getLastLoginbyID: function(uid){
+        uid=nonPwCheck(uid);      
+        return new Promise((resolve, reject)=>{
+            var date="";
+            var sql =" SELECT * FROM `user` WHERE `UserID` = ?";
+            dbconnection().then((con)=>{
+                con.query(sql,[uid],function (err, data) {
+                if (err) throw err;
+                // iterate for all the rows in result
+                Object.keys(data).forEach(function(key) {
+                    date = data[key].last_login;
+                });
+                closeConnection(con);
+                resolve(date);
                 });
             }); 
         });
@@ -322,13 +343,27 @@ var self = module.exports={
     },
     registerUserInformation: function(key, name, pw){
         console.log("call registeruser infor");
-        self.getUIDbyKey(key).then((result)=>{
-            console.log("user id of key=",key,":", result, "no. of chatrooms= ",result.length);
-            if (result.length!=0){
-                var newKey='';
-                this.updateUserName(result, name);
-                this.updateUserPassword(result,pw);
-                this.updateVerificationKey(result,newKey);
+        self.getUIDbyKey(key).then((id)=>{
+            //1. key exist?
+            //2. last-log in date            
+            console.log("user id of key=",key,":", id, "= ",id.length);
+            if (id.length!=0){
+                //check last login date
+                self.getLastLoginbyID(id).then((date)=>{
+                    var todayDate = new Date();
+                    console.log(todayDate);
+                    todayDate= todayDate.toISOString().slice(0, 10);
+                    date=date.toISOString().slice(0,10);
+                    console.log(date);
+                    console.log(todayDate==date);
+
+                    if (date==todayDate){
+                        var newKey=' ';
+                        this.updateUserName(id, name);
+                        this.updateUserPassword(id,pw);
+                        this.updateVerificationKey(id,newKey);
+                    }                    
+                })
             }
         })
         return true;
@@ -364,16 +399,14 @@ getChatroomListbyUID("0").then((result)=>{
 })
 */
 
-/*
+
 //sign-up
 //check if email not exist => get rows by email => t: sign-up
 //check if the verification key exists => get rows by verification key => t: can signup
-var str1 ="<script>console.log('hi')akj;lkdbj;kasjdfkdsj;afkjdslkjflksdjeurijdkc;s<script><script>console.log('hi')<script><script>console.log('hi')<script>";
+
 var functions = require('./dbFunctions.js');
 //functions.updateUserPassword(5,"");
-functions.checkEmail_Password_Pair(str1,"").then((result)=>{
-    console.log("uid of the email pw pair=", result);
-})*/
+functions.registerUserInformation("k2","n2","pw2");
 
 
 //sign-in

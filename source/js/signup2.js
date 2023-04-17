@@ -6,15 +6,26 @@ var server = new ChatClient();
 
 button_save.addEventListener("click",function(event){
 	console.log("click save");
-	updateUser(userName.value, password.value);
-	window.location="index.html";
+    if (passwordStrength(password.value)){
+        updateUser(userName.value, password.value);
+        window.location="index.html";
+    }	
+    else {
+        alert("Your password is not strong enough//password rule");
+        button_save.disabled = true;
+        setTimeout(function(){button_save.disabled = false;}, 120000);
+    }
+    
 });
-
-function updateUser(name, pw){
+let strongPassword = new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})');
+function passwordStrength(password){
+    if (strongPassword.test(password)) return true;
+    return false;
+}
+function updateUser(name, pw){    
 	console.log("user name=",name);
 	console.log("pw = ",pw);
 	var current_url= window.location.href;
-	// get access to URLSearchParams object
 	var query = window.location.search.substring(1);
     console.log(current_url);
     console.log(query);
@@ -22,14 +33,14 @@ function updateUser(name, pw){
     key=query[1];
     console.log(key);
 
-    server.connect("localhost:9026",key);
+    server.connect("localhost:443",key);
 
     server.connection.onopen = function(event){
             var data = {
                  type: "signUp2",
                  key: key,
                  name: name,
-                 password: pw   //encryption
+                 password: pw
             };
             server.connection.send(JSON.stringify(data));
         }		

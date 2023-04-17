@@ -26,5 +26,10 @@ login:
 
 //note:
 - message checking: message: max. character = 100
-- encryption, decryption/ hash
+- encryption, decryption => ssl
+
+- password rule
+    - signup2.js 
 - database: script detection & removal, input type check, input length check /done
+
+//signup2, return message & close connection

@@ -17,8 +17,7 @@ ChatClient.prototype.connect = function(url,un){
     	alert("Websockets not supported by your Browser!");
     	return;
   	}
-  	var final_url ="ws://"+ url+"/un="+un;
-
+  	var final_url ="wss://"+ url+"/un="+un;
   	this.connection = new WebSocket(final_url);
 }
 

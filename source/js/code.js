@@ -25,7 +25,6 @@ var Usuario = null;
 var renderuser = false; //for rendering the user
 
 //Hide chat during login page
-
 button_login.addEventListener("click",function(event){
 	if(checkBox()) login();
 });
@@ -53,7 +52,7 @@ document.addEventListener("keydown",function(event)
 //Sending messages to the server -- The data also has the position of the user's box
 function onSendMessage(){
 	if(!input.value == ""){
-
+		if (input.value.length>100) input.value = input.value.slice(0, 100);
 		position = [Usuario.cube.position.x, Usuario.cube.position.y, Usuario.cube.position.z];
 		//Enviarho al servidor
 		var data ={
@@ -93,14 +92,34 @@ function checkBox(){
 	return true;
 }
 
+
 //Logs the user in and opens the callbacks for the websockets
 function login(){
 	//Connect to the chat room
-	//server.connect("localhost:9026",input_un.value);
-	// server.connect("ecv-etic.upf.edu:9026",input_un.value);
-	server.connect("localhost:9026",input_un.value);
+	//server.connect("localhost:443",input_un.value);
+	// server.connect("ecv-etic.upf.edu:443",input_un.value);
+	
+	server.connect("localhost:443",input_un.value);
 	//Creating user, gives it a cube and adding to the scene
 	Usuario = new User(input_un.value);
+	var inactivityTime = function(){
+		var idleTime=0;
+		document.onkeydown = resetTimer;
+	
+		function logout(){
+			alert("Logout");
+			server.connection.onclose= function(){
+				server.connection.close();
+			}
+			location.reload();
+		
+		}
+		function resetTimer(){
+			clearTimeout(idleTime);
+			idleTime = setTimeout(logout, 3000);
+		}
+	}
+	inactivityTime();
 
 	//////////////////////////////////////////////////////////////////////////////////////////
 	//CALLBACKS FOR WEBSOCKETSERVER
@@ -114,8 +133,6 @@ function login(){
     	};
 		server.connection.send(JSON.stringify(data));
 	}
-	
-
 	//When we receive a message from the server
 	server.connection.onmessage = function ( msg ){
 		//data received
@@ -156,8 +173,6 @@ function login(){
 			}
 		}
 
-
-
 		if(data.type == "message"){
 			//Two kind of messages
 			//1- sent from the user 
@@ -184,14 +199,21 @@ function login(){
 
 		//Receive data about your cube when login
 		if(data.type =="LOG"){
-			Usuario.setId(data.id);
-			//adds cube
-			Usuario.setCube(data.p,data.c);
-			scene.add(Usuario.cube);
-			//adds the cone that indicates the user
-			Usuario.setCone(data.p);
-			scene.add(Usuario.cone);
-			renderuser = true; // The users has his cube, so we can render it now
+			if (data.uid!= -1){
+				Usuario.setId(data.id);
+				
+				//adds cube
+				Usuario.setCube(data.p,data.c);
+				scene.add(Usuario.cube);
+				//adds the cone that indicates the user
+				Usuario.setCone(data.p);
+				scene.add(Usuario.cone);
+				renderuser = true; // The users has his cube, so we can render it now
+			}
+			else{
+				Usuario.setId(data.id);
+			}
+
 		}
 
 		//the message with type USERS is received when we logged in the websocket server
@@ -234,13 +256,3 @@ function login(){
 
 }
 
-//encrypt data
-function hashData(data) {
-    return CryptoJS.subtle.digest("SHA-256", new TextEncoder().encode(data))
-      .then(h => {
-        const hashArray = Array.from(new Uint8Array(h));
-        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        return hashHex;
-      })
-      .catch(console.error);
-  }

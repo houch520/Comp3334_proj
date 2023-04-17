@@ -1,6 +1,7 @@
 //NodeJS code on server side // 
 
 const CryptoJS = require("crypto-js");
+const https = require('https');
 //Include 'websocket' and 'http' NodeJS modules
 var WebSocketServer = require('websocket').server;
 var http = require('http');
@@ -14,6 +15,10 @@ const dbFcn= require('./dbFunctions.js');
 var connections = [];
 var clients = [];
 var minDist = 15; //offset distance - Every user outside this lenght are not going to receive a message
+const options = {
+    key: fs.readFileSync('./key.pem'),
+    cert: fs.readFileSync('./cert.pem')
+  };
 
 //Client object
 function Client(username,connection,id,p,c, uid){
@@ -27,7 +32,7 @@ function Client(username,connection,id,p,c, uid){
 
 //Create HTTP Server - Since we are using WebSockets, we just need it to use HTTP Requests/Responses
 
-var server = http.createServer(function(request, response) {
+var server = https.createServer(options, (request, response) =>{
     var q = url.parse(request.url,true);
 
     //console.log(q.query.verKey);
@@ -82,8 +87,8 @@ var server = http.createServer(function(request, response) {
         
     
 });
-server.listen(9026, function() {
-    console.log("["+ new Date()+"]" + "Server is listening on port 9026");
+server.listen(443, function() {
+    console.log("["+ new Date()+"]" + "Server is listening on port 443");
 });
 
 
@@ -113,9 +118,12 @@ ws.on("request", function(request) {
     //Values of the cube
     var position = getRandomPosition();
     var c = getRandomColor();
-    var client = new Client(username, connection,id,position,c, -1);
-    clients.push(client);
+    var client = new Client(username, connection,id,position,c,'-1');
 
+    clients.push(client);
+    //Send the user's ID, cubes's position and color
+    //connection.sendUTF(JSON.stringify({type:"LOG", id: client.userID, p: client.position,c: client.c}));
+    
     //Server console notification
     console.log("["+new Date() + "]: New connection from user: "+client.username+ " with id: " + client.userID);
 
@@ -170,15 +178,20 @@ ws.on("request", function(request) {
                             data.msg = "User "+uName+" has joined";
                             data.p = client.position;
                             data.c = client.c;
-                            clients[id].uid = uid;
-                            
+                            clients.push(client);
+                            clients[getIndexofClient(id)].uid = uid;
+                            console.log("client's uid = ",clients[id].uid);
                             //Send the user's ID, cubes's position and color
-                            connection.sendUTF(JSON.stringify({type:"LOG", id: client.userID, p: client.position,c: client.c}));
+                            connection.sendUTF(JSON.stringify({type:"LOG", id: client.userID, uid: uid, p: client.position,c: client.c}));
                             doBroadcast(data);
                         })
                         dbFcn.updateLastLogin(uid);
                     }
                     else {
+                        console.log("uid == -1");
+                        console.log("return messge.uid = ", data.uid);
+                        console.log("client's id = ", client.userID);
+                        connection.sendUTF(JSON.stringify({type:"LOG", id: client.userID, uid: -1}));
                         doBroadcast(data);
                     }
                                      
@@ -238,7 +251,7 @@ ws.on("request", function(request) {
     	// 	}
     	// }
     	//Message
-        if (clients[index].uid!= -1){
+        //if (clients[index].uid!= -1){
             var data = {
                 type: "disconnect",
                 msg: "User: "+clients[index].username+" has left",
@@ -249,11 +262,12 @@ ws.on("request", function(request) {
     
             console.log("[USERLOGOUT] ID: "+data.id+" has left the chatroom");
             doBroadcast(data);
-        }
+        //}
+        /*
         else{
             clients.splice(index,1); // Remove the client
             connections.splice(id,1); //
-        }
+        }*/
     });
 });
 
@@ -271,7 +285,7 @@ let transporter = nodemailer.createTransport({
     }
   });
 function sendEmail(email,key){
-    var link="http://localhost:9026/?verKey="+key;
+    var link="https://localhost:443/?verKey="+key;
     var mailOptions = {
         from: 'youremail@gmail.com',
         to: email,
