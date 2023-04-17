@@ -238,16 +238,21 @@ ws.on("request", function(request) {
     	// 	}
     	// }
     	//Message
-        clients.splice(index,1); // Remove the client
-        connections.splice(id,1); // remove the connection from the array
         if (clients[index].uid!= -1){
             var data = {
                 type: "disconnect",
                 msg: "User: "+clients[index].username+" has left",
                 id: clients[index].userID,
-            }    
+            }
+            clients.splice(index,1); // Remove the client
+            connections.splice(id,1); // remove the connection from the array
+    
             console.log("[USERLOGOUT] ID: "+data.id+" has left the chatroom");
             doBroadcast(data);
+        }
+        else{
+            clients.splice(index,1); // Remove the client
+            connections.splice(id,1); //
         }
     });
 });
