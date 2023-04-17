@@ -62,7 +62,7 @@ function onSendMessage(){
 			pos: position,
 			msg : input.value
 		};
-
+		console.log("msg=",data.msg);
 		server.sendMessage(data);
 		input.value	="";
 	}
@@ -79,6 +79,7 @@ function showMessage(classname,msg){
 }
 
 //Check input values for the login
+//check login input
 function checkBox(){
 	if (input_un.value.length == 0)
 	{
@@ -94,19 +95,10 @@ function checkBox(){
 
 //Logs the user in and opens the callbacks for the websockets
 function login(){
-
-	//Make Login Page disappear
-	div_login.style.display ='none';
-
-	//Make chat appear
-	div_container.style.display="block";
-	//div_header.textContent = "Chatroom 2";
-
 	//Connect to the chat room
 	//server.connect("localhost:9026",input_un.value);
 	// server.connect("ecv-etic.upf.edu:9026",input_un.value);
 	server.connect("localhost:9026",input_un.value);
-
 	//Creating user, gives it a cube and adding to the scene
 	Usuario = new User(input_un.value);
 
@@ -115,19 +107,50 @@ function login(){
     //The first thing when extablishes connection. It sends the user information to the server
 	server.connection.onopen = function(event){
 		var data = {
-	     	type: "notification",
-	     	msg: "User: "+Usuario.username+" has joined",
+	     	type: "login",
+			email: input_un.value,
+			pw: input_pw.value,
 	     	from: input_un.value
     	};
 		server.connection.send(JSON.stringify(data));
 	}
+	
 
 	//When we receive a message from the server
 	server.connection.onmessage = function ( msg ){
-
 		//data received
 		var data = JSON.parse(msg.data);
 		//console.log(data);
+		
+		console.log(data.id);
+		console.log(Usuario.id);
+
+		if (data.type =="login" && data.uid != -1){
+			//Make Login Page disappear
+			div_login.style.display ='none';
+
+			//Make chat appear
+			div_container.style.display="block";
+
+			//A notification is received when someone new connects to the chatroom
+			//This means that we need to render a new cube
+			showMessage("msg_notif",data.msg);
+			if(Usuario.id!=data.id){
+				cubes[data.id] = createCube(data.p,data.c);
+				cubes[data.id].uptime = 1.2;
+				scene.add(cubes[data.id]);
+			}
+			if (Usuario.id==data.id){
+				Usuario.username=data.uName;
+			}
+
+		}
+		else if (data.type =="login" && data.uid == -1){
+			//invalid password/email
+			if (Usuario.id==data.id) alert("Invalid password/email");
+		}
+
+
 
 		if(data.type == "message"){
 			//Two kind of messages

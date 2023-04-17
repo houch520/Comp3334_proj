@@ -23,8 +23,8 @@ login:
 1. client: send email, password
 2. server: call function
 
+
 //note:
 - message checking: max. character = 100
 - encryption, decryption
-
 - database: script detection & removal

@@ -52,7 +52,7 @@ var self = module.exports={
     },
     updateUserPassword: function (uid, password){
         dbconnection().then((con)=>{
-            var sql = "UPDATE `user` SET `Userpassword` = ? WHERE `user`.`UserID` = MD5(?);";
+            var sql = "UPDATE `user` SET `Userpassword` = MD5(?) WHERE `user`.`UserID` = ?;";
             con.query(sql, [password, uid],function (err, data) {
                 if (err) throw err;
                 console.log("1 record updated");
@@ -165,6 +165,8 @@ var self = module.exports={
     },
     checkEmail_Password_Pair: function (email, password){//login function
         //return UserID if there exist a email-password pair, else -1
+        console.log("emali = ",email);
+        console.log("password = ", password);
         return new Promise((resolve, reject)=>{
             var uid = -1;
             var sql =" SELECT * FROM `user` WHERE `email` = ? AND `Userpassword` = MD5(?)";
@@ -173,6 +175,7 @@ var self = module.exports={
                 if (err) throw err;
                 // iterate for all the rows in result
                 Object.keys(data).forEach(function(key) {
+                    console.log("UID = ",data[key].UserID);
                     uid = data[key].UserID;
                 });
                 closeConnection(con);
@@ -196,7 +199,6 @@ var self = module.exports={
             }); 
         })
     },
-
     getUIDbyKey: function(key){
         return new Promise((resolve, reject)=>{
             var uid="";
@@ -210,6 +212,24 @@ var self = module.exports={
                 });
                 closeConnection(con);
                 resolve(uid);
+                });
+            }); 
+        });
+
+    },
+    getUNamebyID: function(uid){
+        return new Promise((resolve, reject)=>{
+            var uName="";
+            var sql =" SELECT * FROM `user` WHERE `UserID` = ?";
+            dbconnection().then((con)=>{
+                con.query(sql,[uid],function (err, data) {
+                if (err) throw err;
+                // iterate for all the rows in result
+                Object.keys(data).forEach(function(key) {
+                    uName = data[key].UserName;
+                });
+                closeConnection(con);
+                resolve(uName);
                 });
             }); 
         });
@@ -295,9 +315,12 @@ getChatroomListbyUID("0").then((result)=>{
 //check if email not exist => get rows by email => t: sign-up
 //check if the verification key exists => get rows by verification key => t: can signup
 /*
-var functions = require('./dbFunctions.js')
-functions.registerUserInformation('47e5550b',"emili","mypw");*/
-
+var functions = require('./dbFunctions.js');
+functions.updateUserPassword(5,"somepassword");
+functions.checkEmail_Password_Pair("emilyng718@gmail.com","somepassword").then((result)=>{
+    console.log("uid of the email pw pair=", result);
+})
+*/
 
 //sign-in
 //check if email-password pair exists (return value != -1: exist, else login fail)

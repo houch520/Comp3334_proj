@@ -5,7 +5,6 @@ function User(un){
 	this.username = un;
 	this.cube = null;
 	this.id = -1;
-
 }
 
 //methods

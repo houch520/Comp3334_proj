@@ -31,7 +31,7 @@ var server = http.createServer(function(request, response) {
 
     //console.log(q.query.verKey);
     var normalReq = true;
-    console.log("Looking for: "+q.pathname);
+    //console.log("Looking for: "+q.pathname);
     if (q.pathname=="/") {   
         q.pathname="/index.html";    
         if(q.query.verKey) {
@@ -55,9 +55,7 @@ var server = http.createServer(function(request, response) {
             });
         }  
     }
-    if (normalReq){
-
-        
+    if (normalReq){        
         fs.readFile("."+q.pathname,function(err,data){
             if(err){
                 response.writeHead(404,{'Content-Type':'text/html'});
@@ -111,7 +109,6 @@ ws.on("request", function(request) {
     //set attributes value for user
     var id = connections.push(connection) - 1; // ID of the connected user
 
-
     //Values of the cube
     var position = getRandomPosition();
     var c = getRandomColor();
@@ -129,11 +126,10 @@ ws.on("request", function(request) {
         if (message.type === 'utf8') {
             var data = JSON.parse(message.utf8Data);
             console.log("Received message " + JSON.stringify(data));
-            //check signUp request
-            
+
+            //check signUp request            
             if (data.type =="signUp"){       
-                console.log(data.msg);
-                
+                console.log(data.msg);                
                 dbFcn.checkEmail(data.msg).then((result)=>{
                     console.log("result=",result);
                     if (result){                        
@@ -141,10 +137,11 @@ ws.on("request", function(request) {
                         console.log("random key = ",verKey);
                         dbFcn.addNewUser("userName","password",data.msg,verKey);
                         console.log("added new user");
+                        //send link to email
+                        sendEmail(data.msg, verKey);
                     }
                     else{console.log("email already existed");}
                 })
-                //send link to email
             }            
             if (data.type =="signUp2"){
                 console.log("key=",data.key);
@@ -161,13 +158,28 @@ ws.on("request", function(request) {
                     }
                 } 
             }
-
+            //receive login
             //if the data received is a notification we need to resend it with the cube position and color
-            if(data.type =="notification"){
-                data.id = id;
-                data.p = client.position;
-                data.c = client.c;
-                doBroadcast(data);
+            if(data.type =="login"){
+                dbFcn.checkEmail_Password_Pair(data.email, data.pw).then((uid)=>{
+                    console.log("in login check, uid of email pw pair = ", uid);
+                    data.id = id;
+                    data.uid=uid;
+                    if (uid!=-1){
+                        console.log("uid != -1");
+                        dbFcn.getUNamebyID(uid).then((uName)=>{
+                            data.uName = uName;
+                            data.msg = "User "+uName+" has joined";
+                            data.p = client.position;
+                            data.c = client.c;
+                            doBroadcast(data)
+                        })
+                    }
+                    else {
+                        doBroadcast(data);
+                    }
+                                     
+                })
             }
 
             // When a client moved a cube we update clients
@@ -229,6 +241,38 @@ ws.on("request", function(request) {
         doBroadcast(data);
     });
 });
+
+var nodemailer = require('nodemailer');
+
+let transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      type: 'OAuth2',
+      user: 'comp3334g38@gmail.com',
+      pass: 'COMP3334',
+      clientId:      '870552542586-2clbtb4ubapmjnbtlceui0ep529hsc3f.apps.googleusercontent.com' ,
+      clientSecret: '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',
+      refreshToken: '1//04OIuIAelnzY-CgYIARAAGAQSNwF-L9IryLEQCG_J1EXS1yLUMY1MEBwAAD3pkLGsu8yf1Q7hxAa46FLdX4iDMiSzKqb0fOWABRw'
+    }
+  });
+function sendEmail(email,key){
+    var link="http://localhost:9026/?verKey="+key;
+    var mailOptions = {
+        from: 'youremail@gmail.com',
+        to: email,
+        subject: 'PolyU Chatroom SignUp confirmation',
+        html: '<p>Please click the link to confirm your registration <a href= "'+link+'">here</a></p>'
+      };
+      
+    transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email sent: ' + info.response);
+        }
+      }); 
+
+}
 
 
 function Distance(pos1, pos2){

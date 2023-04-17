@@ -7,7 +7,7 @@ var server = new ChatClient();
 button_save.addEventListener("click",function(event){
 	console.log("click save");
 	updateUser(userName.value, password.value);
-	//window.location="index.html";
+	window.location="index.html";
 });
 
 function updateUser(name, pw){
