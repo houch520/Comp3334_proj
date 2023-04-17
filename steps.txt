@@ -25,6 +25,6 @@ login:
 
 
 //note:
-- message checking: max. character = 100
-- encryption, decryption
-- database: script detection & removal
+- message checking: message: max. character = 100
+- encryption, decryption/ hash
+- database: script detection & removal, input type check, input length check /done

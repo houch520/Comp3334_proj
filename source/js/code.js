@@ -227,3 +227,14 @@ function login(){
 	}
 
 }
+
+//encrypt data
+function hashData(data) {
+    return CryptoJS.subtle.digest("SHA-256", new TextEncoder().encode(data))
+      .then(h => {
+        const hashArray = Array.from(new Uint8Array(h));
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        return hashHex;
+      })
+      .catch(console.error);
+  }

@@ -174,6 +174,7 @@ ws.on("request", function(request) {
                             data.c = client.c;
                             doBroadcast(data)
                         })
+                        dbFcn.updateLastLogin(uid);
                     }
                     else {
                         doBroadcast(data);

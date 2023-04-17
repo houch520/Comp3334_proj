@@ -7,7 +7,7 @@ npm install crypto-js
 
 //Hash
 function hashData(data) {
-    return crypto.subtle.digest("SHA-256", new TextEncoder().encode(data))
+    return CryptoJS.subtle.digest("SHA-256", new TextEncoder().encode(data))
       .then(h => {
         const hashArray = Array.from(new Uint8Array(h));
         const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
@@ -17,7 +17,7 @@ function hashData(data) {
   }
 //import CryptoJS
 //DES
-    function encryptData(data, key) {
+  function encryptData(data, key) {
     const encrypted = CryptoJS.DES.encrypt(data, key).toString();
     return encrypted;
   }
@@ -26,3 +26,4 @@ function hashData(data) {
     const decrypted = CryptoJS.DES.decrypt(encryptedData, key).toString(CryptoJS.enc.Utf8);
     return decrypted;
   }
+//use ssl for encryption decryption

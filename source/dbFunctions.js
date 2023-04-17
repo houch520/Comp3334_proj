@@ -13,12 +13,44 @@ function createUserID(){//update later(generate hash with entry index)
     });
 }
 
+
+function nonPwCheck(string){
+    //word limit: 70
+    return inputPreprocessing(string, 70);
+}
+function nameCheck(string){
+    //word limit: 20
+    return inputPreprocessing(string, 20);
+}
+function pwCheck(string){
+    //word limit: 50
+    return inputPreprocessing(string, 50);
+}
+
+function inputPreprocessing(str, limit){
+    if ((str===null) || (str==='')) return false;
+    else str = str.toString();//convert to string
+    //remove html tag
+    str = str.replace( /(<([^>]+)>)/ig, '');
+    //length check
+    if (str.length>= limit) str = str.slice(0, limit-1);
+    console.log("processed string = ", str, "length = ", str.length);
+
+    return str;
+}
+
 var self = module.exports={
 
 //modify tables
 //users
 //get number of rows in userTable
     addNewUser: function (uName, passsword, email, key){
+        //max length: uName, password, email = 70 key =50
+        uName=namePwCheck(uName);        
+        email=nonPwCheck(email);
+        key=nonPwCheck(key);
+        password=pwCheck(password);
+
         dbconnection().then((con)=>{
             createUserID().then((uid)=>{
                 var sql = "INSERT INTO `user` (`UserID`, `UserName`, `Userpassword`, `email`, `verification_Key`, `last_login`) VALUES (?,?,MD5(?),?,?,Now())";
@@ -31,6 +63,7 @@ var self = module.exports={
         });
     },
     removeUser: function(uid){
+        uid=nonPwCheck(uid);
         dbconnection().then((con)=>{
             var sql = "DELETE FROM `user` WHERE `user`.`UserID` = ?";
             con.query(sql, [uid],function (err, data) {
@@ -41,6 +74,9 @@ var self = module.exports={
         });
     },
     updateUserName: function (uid, userName){
+        uName=namePwCheck(uName);
+        uid=nonPwCheck(uid);
+
         dbconnection().then((con)=>{
             var sql = "UPDATE `user` SET `UserName` = ? WHERE `user`.`UserID` = ?;";
             con.query(sql, [userName, uid],function (err, data) {
@@ -51,6 +87,8 @@ var self = module.exports={
         });
     },
     updateUserPassword: function (uid, password){
+        uid=nonPwCheck(uid);      
+        password=pwCheck(password);
         dbconnection().then((con)=>{
             var sql = "UPDATE `user` SET `Userpassword` = MD5(?) WHERE `user`.`UserID` = ?;";
             con.query(sql, [password, uid],function (err, data) {
@@ -61,6 +99,8 @@ var self = module.exports={
         });
     },
     updateVerificationKey: function (uid, key){
+        uid=nonPwCheck(uid);      
+        key=nonPwCheck(key);
         dbconnection().then((con)=>{
             var sql = "UPDATE `user` SET `verification_Key` = ? WHERE `user`.`UserID` = ?;";
             con.query(sql, [key, uid],function (err, data) {
@@ -71,6 +111,7 @@ var self = module.exports={
         });
     },
     updateLastLogin: function (uid){//update last_login date
+        uid=nonPwCheck(uid);      
         dbconnection().then((con)=>{
             var sql = "UPDATE `user` SET `last_login` = Now() WHERE `user`.`UserID` = ?";
             con.query(sql, [uid],function (err, data) {
@@ -148,6 +189,7 @@ var self = module.exports={
     //user
     checkEmail: function (email){
         //return true if email does not exist in the db, else false
+        email=nonPwCheck(email);      
         return new Promise((resolve, reject)=>{
             var numRows = 0;
             var sql =" SELECT * FROM `user` WHERE `email` = ?";
@@ -167,6 +209,9 @@ var self = module.exports={
         //return UserID if there exist a email-password pair, else -1
         console.log("emali = ",email);
         console.log("password = ", password);
+
+        email=nonPwCheck(email);      
+        password=pwCheck(password);
         return new Promise((resolve, reject)=>{
             var uid = -1;
             var sql =" SELECT * FROM `user` WHERE `email` = ? AND `Userpassword` = MD5(?)";
@@ -185,6 +230,7 @@ var self = module.exports={
         });
     },
     checkVerificationKey: function (key){
+        key=nonPwCheck(key);      
         //return true if the verification key exists
         return new Promise((resolve, reject)=>{
             var numRows = 0;
@@ -200,6 +246,7 @@ var self = module.exports={
         })
     },
     getUIDbyKey: function(key){
+        key=nonPwCheck(key);      
         return new Promise((resolve, reject)=>{
             var uid="";
             var sql =" SELECT * FROM `user` WHERE `verification_Key` = ?";
@@ -218,6 +265,7 @@ var self = module.exports={
 
     },
     getUNamebyID: function(uid){
+        uid=nonPwCheck(uid);      
         return new Promise((resolve, reject)=>{
             var uName="";
             var sql =" SELECT * FROM `user` WHERE `UserID` = ?";
@@ -286,6 +334,12 @@ var self = module.exports={
         return true;
     }
 }
+//detect script
+
+//check user name
+//check 
+
+
 /*
 //testing code
 addNewUser("userA", "somePassword","user@gmail.com","aKey");
@@ -310,17 +364,17 @@ getChatroomListbyUID("0").then((result)=>{
 })
 */
 
-
+/*
 //sign-up
 //check if email not exist => get rows by email => t: sign-up
 //check if the verification key exists => get rows by verification key => t: can signup
-/*
+var str1 ="<script>console.log('hi')akj;lkdbj;kasjdfkdsj;afkjdslkjflksdjeurijdkc;s<script><script>console.log('hi')<script><script>console.log('hi')<script>";
 var functions = require('./dbFunctions.js');
-functions.updateUserPassword(5,"somepassword");
-functions.checkEmail_Password_Pair("emilyng718@gmail.com","somepassword").then((result)=>{
+//functions.updateUserPassword(5,"");
+functions.checkEmail_Password_Pair(str1,"").then((result)=>{
     console.log("uid of the email pw pair=", result);
-})
-*/
+})*/
+
 
 //sign-in
 //check if email-password pair exists (return value != -1: exist, else login fail)
