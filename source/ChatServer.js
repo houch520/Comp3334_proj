@@ -116,9 +116,6 @@ ws.on("request", function(request) {
     var client = new Client(username, connection,id,position,c, -1);
     clients.push(client);
 
-    //Send the user's ID, cubes's position and color
-    connection.sendUTF(JSON.stringify({type:"LOG", id: client.userID, p: client.position,c: client.c}));
-
     //Server console notification
     console.log("["+new Date() + "]: New connection from user: "+client.username+ " with id: " + client.userID);
 
@@ -174,7 +171,10 @@ ws.on("request", function(request) {
                             data.p = client.position;
                             data.c = client.c;
                             clients[id].uid = uid;
-                            doBroadcast(data)
+                            
+                            //Send the user's ID, cubes's position and color
+                            connection.sendUTF(JSON.stringify({type:"LOG", id: client.userID, p: client.position,c: client.c}));
+                            doBroadcast(data);
                         })
                         dbFcn.updateLastLogin(uid);
                     }
@@ -238,15 +238,14 @@ ws.on("request", function(request) {
     	// 	}
     	// }
     	//Message
+        clients.splice(index,1); // Remove the client
+        connections.splice(id,1); // remove the connection from the array
         if (clients[index].uid!= -1){
             var data = {
                 type: "disconnect",
                 msg: "User: "+clients[index].username+" has left",
                 id: clients[index].userID,
-            }
-            clients.splice(index,1); // Remove the client
-            connections.splice(id,1); // remove the connection from the array
-    
+            }    
             console.log("[USERLOGOUT] ID: "+data.id+" has left the chatroom");
             doBroadcast(data);
         }

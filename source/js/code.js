@@ -122,8 +122,8 @@ function login(){
 		var data = JSON.parse(msg.data);
 		//console.log(data);
 		
-		console.log(data.id);
-		console.log(Usuario.id);
+		console.log("data.id = ",data.id);
+		console.log("my.id = ", Usuario.id);
 
 		if (data.type =="login" && data.uid != -1){
 			//Make Login Page disappear

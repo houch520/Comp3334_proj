@@ -44,9 +44,9 @@ var self = module.exports={
 //modify tables
 //users
 //get number of rows in userTable
-    addNewUser: function (uName, passsword, email, key){
+    addNewUser: function (uName, password, email, key){
         //max length: uName, password, email = 70 key =50
-        uName=namePwCheck(uName);        
+        uName=nameCheck(uName);        
         email=nonPwCheck(email);
         key=nonPwCheck(key);
         password=pwCheck(password);
@@ -54,7 +54,7 @@ var self = module.exports={
         dbconnection().then((con)=>{
             createUserID().then((uid)=>{
                 var sql = "INSERT INTO `user` (`UserID`, `UserName`, `Userpassword`, `email`, `verification_Key`, `last_login`) VALUES (?,?,MD5(?),?,?,Now())";
-                con.query(sql, [uid, uName, passsword, email, key],function (err, data) {
+                con.query(sql, [uid, uName, password, email, key],function (err, data) {
                     if (err) throw err;
                     console.log("1 record inserted");
                     closeConnection(con);
