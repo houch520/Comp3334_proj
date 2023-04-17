@@ -12,7 +12,7 @@ module.exports.dbconnection = () => {
         con.connect((err)=>{
             if (err) throw err;
             else{
-                console.log("Connected");
+                //console.log("Connected");
                 resolve(con);
             }            
         })
@@ -20,5 +20,5 @@ module.exports.dbconnection = () => {
 }
 module.exports.closeConnection = (connection)=>{
     connection.destroy();
-    console.log("Disonnected");
+    //console.log("Disonnected");
 }

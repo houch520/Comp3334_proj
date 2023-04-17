@@ -5,6 +5,7 @@ function User(un){
 	this.username = un;
 	this.cube = null;
 	this.id = -1;
+	this.uid= -1;
 }
 
 //methods
@@ -13,6 +14,9 @@ User.prototype.setun = function(un){
 }
 User.prototype.setId = function(id){
 	this.id = id;
+}
+User.prototype.setUId = function(id){
+	this.uid = id;
 }
 //Create Cube
 User.prototype.setCube = function(p,c){
@@ -112,6 +116,7 @@ save_btn.addEventListener("click",function(event){
 	var data ={
 		type:"EDIT",
 		id: Usuario.id,
+		uid: Usuario.uid,
 		newun: input_newun.value,
 		newc: input_newc.value
 	}

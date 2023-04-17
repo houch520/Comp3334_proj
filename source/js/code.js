@@ -140,14 +140,20 @@ function login(){
 				cubes[data.id].uptime = 1.2;
 				scene.add(cubes[data.id]);
 			}
-			if (Usuario.id==data.id){
+			else{
 				Usuario.username=data.uName;
+				Usuario.uid=data.uid;
 			}
 
 		}
 		else if (data.type =="login" && data.uid == -1){
 			//invalid password/email
-			if (Usuario.id==data.id) alert("Invalid password/email");
+			if (Usuario.id==data.id) {
+				alert("Invalid password/email");
+				server.connection.close();	
+				scene.remove(cubes[data.id]); // Remove from the scene
+				delete cubes[data.id]; // Remove the cube
+			}
 		}
 
 

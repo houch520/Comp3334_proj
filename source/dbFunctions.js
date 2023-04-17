@@ -73,13 +73,13 @@ var self = module.exports={
             });
         });
     },
-    updateUserName: function (uid, userName){
-        uName=namePwCheck(uName);
+    updateUserName: function (uid, uName){
+        uName=nameCheck(uName);
         uid=nonPwCheck(uid);
 
         dbconnection().then((con)=>{
             var sql = "UPDATE `user` SET `UserName` = ? WHERE `user`.`UserID` = ?;";
-            con.query(sql, [userName, uid],function (err, data) {
+            con.query(sql, [uName, uid],function (err, data) {
                 if (err) throw err;
                 console.log("1 record updated");
                 closeConnection(con);

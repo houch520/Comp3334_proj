@@ -16,12 +16,13 @@ var clients = [];
 var minDist = 15; //offset distance - Every user outside this lenght are not going to receive a message
 
 //Client object
-function Client(username,connection,id,p,c){
+function Client(username,connection,id,p,c, uid){
     this.username = username; //Username
     this.connection = connection; // connection
     this.userID = id; //ID
     this.position = p; //position of the cube
     this.c = c; // Color of the cube
+    this.uid = uid;
 }
 
 //Create HTTP Server - Since we are using WebSockets, we just need it to use HTTP Requests/Responses
@@ -112,7 +113,7 @@ ws.on("request", function(request) {
     //Values of the cube
     var position = getRandomPosition();
     var c = getRandomColor();
-    var client = new Client(username, connection,id,position,c);
+    var client = new Client(username, connection,id,position,c, -1);
     clients.push(client);
 
     //Send the user's ID, cubes's position and color
@@ -172,6 +173,7 @@ ws.on("request", function(request) {
                             data.msg = "User "+uName+" has joined";
                             data.p = client.position;
                             data.c = client.c;
+                            clients[id].uid = uid;
                             doBroadcast(data)
                         })
                         dbFcn.updateLastLogin(uid);
@@ -207,7 +209,13 @@ ws.on("request", function(request) {
                 //Change username
                 if(data.newun.length!=0 && index !=-1){
                     console.log("[EDIT] ID: "+data.id+" has changed username from "+clients[index].username+" to "+ data.newun);
+
                     clients[index].username = data.newun;
+                    //change username
+                    //get user id
+                    console.log("User id = ", data.id, "uid in db=", data.uid);
+                    dbFcn.updateUserName(data.uid, data.newun);
+
                 }
 
                 //Change color
@@ -230,16 +238,18 @@ ws.on("request", function(request) {
     	// 	}
     	// }
     	//Message
-        var data = {
-        	type: "disconnect",
-        	msg: "User: "+clients[index].username+" has left",
-        	id: clients[index].userID,
+        if (clients[index].uid!= -1){
+            var data = {
+                type: "disconnect",
+                msg: "User: "+clients[index].username+" has left",
+                id: clients[index].userID,
+            }
+            clients.splice(index,1); // Remove the client
+            connections.splice(id,1); // remove the connection from the array
+    
+            console.log("[USERLOGOUT] ID: "+data.id+" has left the chatroom");
+            doBroadcast(data);
         }
-        clients.splice(index,1); // Remove the client
-        connections.splice(id,1); // remove the connection from the array
-
-        console.log("[USERLOGOUT] ID: "+data.id+" has left the chatroom");
-        doBroadcast(data);
     });
 });
 
