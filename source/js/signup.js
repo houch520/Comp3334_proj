@@ -15,7 +15,7 @@ button_back.addEventListener("click",function(event){
 
 button_sendemail.addEventListener("click",function(event){
 	if (checkEmail(email)) {
-		signup(email.value);
+		signup(email.value).then(()=>{server.connection.close();});
 	}
 	button_sendemail.disabled = true;
 	setTimeout(function(){button_sendemail.disabled = false;}, 120000);
@@ -54,6 +54,7 @@ function signup(email){
 		server.connection.onclose= function(){
 			server.connection.close();
 		}
+		return true;
 
 }
 

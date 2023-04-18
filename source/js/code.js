@@ -31,6 +31,7 @@ button_login.addEventListener("click",function(event){
 
 button_signup.addEventListener("click",function(event){
 	window.location="signup1.html";
+	server.connection.close();
 });
 
 document.addEventListener("keydown",function(event)

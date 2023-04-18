@@ -342,31 +342,36 @@ var self = module.exports={
         });
     },
     registerUserInformation: function(key, name, pw){
-        console.log("call registeruser infor");
-        self.getUIDbyKey(key).then((id)=>{
-            //1. key exist?
-            //2. last-log in date            
-            console.log("user id of key=",key,":", id, "= ",id.length);
-            if (id.length!=0){
-                //check last login date
-                self.getLastLoginbyID(id).then((date)=>{
-                    var todayDate = new Date();
-                    console.log(todayDate);
-                    todayDate= todayDate.toISOString().slice(0, 10);
-                    date=date.toISOString().slice(0,10);
-                    console.log(date);
-                    console.log(todayDate==date);
+        return new Promise((resolve, reject)=>{
+            console.log("call registeruser infor");
+            self.getUIDbyKey(key).then((id)=>{
+                //1. key exist?
+                //2. last-log in date            
+                console.log("user id of key=",key,":", id, "= ",id.length);
+                if (id.length!=0){
+                    //check last login date
+                    self.getLastLoginbyID(id).then((date)=>{
+                        var todayDate = new Date().toLocaleDateString();
+                        console.log("js date() = ",todayDate);
+                        console.log("mysql date= ", date.toLocaleDateString());
+                        //todayDate= todayDate.toISOString().slice(0, 10);
+                        //date=date.toISOString().slice(0,10);
+                        //console.log(date);
+                        date=date.toLocaleDateString();
+                        console.log(todayDate==date);
 
-                    if (date==todayDate){
-                        var newKey=' ';
-                        this.updateUserName(id, name);
-                        this.updateUserPassword(id,pw);
-                        this.updateVerificationKey(id,newKey);
-                    }                    
-                })
-            }
+                        if (date==todayDate){
+                            var newKey=' ';
+                            this.updateUserName(id, name);
+                            this.updateUserPassword(id,pw);
+                            this.updateVerificationKey(id,newKey);
+                        }                    
+                    })
+                }
+            })
+            resolve (true);
         })
-        return true;
+        
     }
 }
 //detect script

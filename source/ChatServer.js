@@ -147,10 +147,6 @@ ws.on("request", function(request) {
                         sendEmail(data.msg, verKey);
                     }
                     else{console.log("email already existed");}
-                    clients.splice(index,1); // Remove the client
-                    connections.splice(id,1); // remove the connection from the array
-    
-                    console.log("[USERLOGOUT] ID: "+data.id+" has left the chatroom");
                 })
             }            
             if (data.type =="signUp2"){
@@ -158,10 +154,6 @@ ws.on("request", function(request) {
                 console.log("name=",data.name);
                 console.log("pw=",data.password);                
                 dbFcn.registerUserInformation(data.key, data.name, data.password);
-                clients.splice(index,1); // Remove the client
-                connections.splice(id,1); // remove the connection from the array
-    
-                console.log("[USERLOGOUT] ID: "+data.id+" has left the chatroom");
             }
 
             //Check Distance to decide to whom send broadcast of message
