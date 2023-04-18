@@ -403,11 +403,11 @@ getChatroomListbyUID("0").then((result)=>{
 //sign-up
 //check if email not exist => get rows by email => t: sign-up
 //check if the verification key exists => get rows by verification key => t: can signup
-
+/*
 var functions = require('./dbFunctions.js');
 //functions.updateUserPassword(5,"");
 functions.registerUserInformation("k2","n2","pw2");
-
+*/
 
 //sign-in
 //check if email-password pair exists (return value != -1: exist, else login fail)
