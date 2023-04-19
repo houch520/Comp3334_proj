@@ -15,7 +15,7 @@ button_save.addEventListener("click",function(event){
         });    
     }	
     else {
-        alert("Your password is not strong enough//password rule");
+        alert("Your password is not strong enough. Note that your password must be: \n1. Longer than 8 characters \n2. Has at least 1 lower case alphabet\n3. Has at least 1 upper case alphabet\n4. Has at least 1 digit\n5. Has at least 1 special character");
         button_save.disabled = true;
         setTimeout(function(){button_save.disabled = false;}, 5000);
     }
