@@ -120,7 +120,7 @@ ws.on("request", function(request) {
     var c = getRandomColor();
     var client = new Client(username, connection,id,position,c,'-1');
 
-    clients.push(client);
+
     //Send the user's ID, cubes's position and color
     //connection.sendUTF(JSON.stringify({type:"LOG", id: client.userID, p: client.position,c: client.c}));
     
@@ -180,9 +180,11 @@ ws.on("request", function(request) {
                             data.c = client.c;
                             clients.push(client);
                             clients[getIndexofClient(id)].uid = uid;
-                            console.log("client's uid = ",clients[id].uid);
+                            
                             //Send the user's ID, cubes's position and color
-                            connection.sendUTF(JSON.stringify({type:"LOG", id: client.userID, uid: uid, p: client.position,c: client.c}));
+                            connection.sendUTF(JSON.stringify({type:"LOG", id: client.userID, uid: uid, p: client.position,c: client.c})
+                            );
+                            console.log("client's uid = ",clients[getIndexofClient(id)].uid);
                             doBroadcast(data);
                         })
                         dbFcn.updateLastLogin(uid);
