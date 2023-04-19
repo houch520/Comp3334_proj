@@ -8,16 +8,16 @@ button_save.addEventListener("click",function(event){
 	console.log("click save");
     if (passwordStrength(password.value)){
         updateUser(userName.value, password.value).then((result)=>{
-            //console.log("return = ", result);
-            server.connection.close();
-            //console.log("line13");
+            console.log("return = ", result);
+            //server.connection.close();
+            console.log("line13");
             window.location="index.html";       
         });    
     }	
     else {
         alert("Your password is not strong enough//password rule");
         button_save.disabled = true;
-        setTimeout(function(){button_save.disabled = false;}, 120000);
+        setTimeout(function(){button_save.disabled = false;}, 5000);
     }
     
 });
@@ -55,5 +55,4 @@ function updateUser(name, pw){
         };
         resolve(true);
     });
-	
 }

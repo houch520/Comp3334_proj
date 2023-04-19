@@ -31,7 +31,7 @@ button_login.addEventListener("click",function(event){
 
 button_signup.addEventListener("click",function(event){
 	window.location="signup1.html";
-	server.connection.close();
+	//server.connection.close();
 });
 
 document.addEventListener("keydown",function(event)
@@ -103,6 +103,7 @@ function login(){
 	server.connect("localhost:443",input_un.value);
 	//Creating user, gives it a cube and adding to the scene
 	Usuario = new User(input_un.value);
+	/*
 	var inactivityTime = function(){
 		var idleTime=0;
 		document.onkeydown = resetTimer;
@@ -120,7 +121,7 @@ function login(){
 			idleTime = setTimeout(logout, 3000);
 		}
 	}
-	inactivityTime();
+	inactivityTime();*/
 
 	//////////////////////////////////////////////////////////////////////////////////////////
 	//CALLBACKS FOR WEBSOCKETSERVER
