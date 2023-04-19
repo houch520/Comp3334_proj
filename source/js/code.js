@@ -103,10 +103,10 @@ function login(){
 	server.connect("localhost:443",input_un.value);
 	//Creating user, gives it a cube and adding to the scene
 	Usuario = new User(input_un.value);
-	/*
+	
 	var inactivityTime = function(){
-		var idleTime=0;
-		document.onkeydown = resetTimer;
+		var idleTime = 0;
+		var timerInterval = 5000; // 5 seconds
 	
 		function logout(){
 			alert("Logout");
@@ -114,14 +114,26 @@ function login(){
 				server.connection.close();
 			}
 			location.reload();
-		
 		}
+	
 		function resetTimer(){
-			clearTimeout(idleTime);
-			idleTime = setTimeout(logout, 3000);
+			idleTime = 0;
 		}
+	
+		// Start the timer interval to check for inactivity
+		var timer = setInterval(function() {
+			idleTime += timerInterval;
+	
+			if (idleTime >= 180000) { // 0.5 hour
+				clearInterval(timer);
+				logout();
+			}
+		}, timerInterval);
+	
+		// Reset the idle time whenever the mouse is moved
+		document.addEventListener('mousemove', resetTimer);
 	}
-	inactivityTime();*/
+	inactivityTime();
 
 	//////////////////////////////////////////////////////////////////////////////////////////
 	//CALLBACKS FOR WEBSOCKETSERVER
