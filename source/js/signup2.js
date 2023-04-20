@@ -8,9 +8,9 @@ button_save.addEventListener("click",function(event){
 	console.log("click save");
     if (passwordStrength(password.value)){
         updateUser(userName.value, password.value).then((result)=>{
-            console.log("return = ", result);
+            //console.log("return = ", result);
             //server.connection.close();
-            console.log("line13");
+            //console.log("line13");
             window.location="index.html";       
         });    
     }	

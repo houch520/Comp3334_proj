@@ -8,7 +8,6 @@ var http = require('http');
 var url = require('url');
 var fs = require('fs');
 //Include connection to mysql database
-//var {dbconnection,closeConnection}= require('./db_connection.js');
 const dbFcn= require('./dbFunctions.js');
 
 //Varables to store the connection and array of clients
@@ -42,9 +41,9 @@ var server = https.createServer(options, (request, response) =>{
         q.pathname="/index.html";    
         if(q.query.verKey) {
             normalReq=false;
-            console.log("received verify key request");
+            //console.log("received verify key request");
             var verKey = q.query.verKey;
-            console.log("verKey=",verKey);       
+            //console.log("verKey=",verKey);       
             dbFcn.checkVerificationKey(verKey).then((result)=>{
                 console.log("result=",result);
                 if (result){
@@ -105,8 +104,8 @@ ws.on("request", function(request) {
     //Pathname format will be /un="Username"
     var pathname = request.resourceURL["pathname"];
     var username = pathname.split("=")[1];
-    console.log("pathname = ",pathname);
-    console.log("Username = ", username);
+    //console.log("pathname = ",pathname);
+    //console.log("Username = ", username);
 
     //Send all the users online that the servers handles to the new connection
     if(clients.length!=0)
@@ -142,7 +141,7 @@ ws.on("request", function(request) {
                     console.log("result=",result);
                     if (result){                        
                         var verKey=CryptoJS.lib.WordArray.random(4).toString(CryptoJS.enc.Hex);
-                        console.log("random key = ",verKey);
+                        //console.log("random key = ",verKey);
                         dbFcn.addNewUser("userName","password",data.msg,verKey);
                         console.log("added new user");
                         //send link to email
@@ -152,9 +151,9 @@ ws.on("request", function(request) {
                 })
             }            
             if (data.type =="signUp2"){
-                console.log("key=",data.key);
-                console.log("name=",data.name);
-                console.log("pw=",data.password);                
+                //console.log("key=",data.key);
+                //console.log("name=",data.name);
+                //console.log("pw=",data.password);                
                 dbFcn.registerUserInformation(data.key, data.name, data.password);
             }
 
@@ -170,7 +169,7 @@ ws.on("request", function(request) {
             //if the data received is a notification we need to resend it with the cube position and color
             if(data.type =="login"){
                 dbFcn.checkEmail_Password_Pair(data.email, data.pw).then((uid)=>{
-                    console.log("in login check, uid of email pw pair = ", uid);
+                    //console.log("in login check, uid of email pw pair = ", uid);
                     data.id = id;
                     data.uid=uid;
                     if (uid!=-1){

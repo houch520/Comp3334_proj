@@ -343,7 +343,7 @@ var self = module.exports={
     },
     registerUserInformation: function(key, name, pw){
         return new Promise((resolve, reject)=>{
-            console.log("call registeruser infor");
+            //console.log("call registeruser infor");
             self.getUIDbyKey(key).then((id)=>{
                 //1. key exist?
                 //2. last-log in date            
@@ -352,13 +352,9 @@ var self = module.exports={
                     //check last login date
                     self.getLastLoginbyID(id).then((date)=>{
                         var todayDate = new Date().toLocaleDateString();
-                        console.log("js date() = ",todayDate);
-                        console.log("mysql date= ", date.toLocaleDateString());
-                        //todayDate= todayDate.toISOString().slice(0, 10);
-                        //date=date.toISOString().slice(0,10);
-                        //console.log(date);
+                        //console.log("js date() = ",todayDate);
                         date=date.toLocaleDateString();
-                        console.log(todayDate==date);
+                        //console.log(todayDate==date);
 
                         if (date==todayDate){
                             var newKey=' ';
