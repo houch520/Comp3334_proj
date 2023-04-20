@@ -46,7 +46,8 @@ function signup(email){
 		server.connection.onopen = function(event){
 			var data = {
 				 type: "signUp",
-				 msg: email
+				 msg: email,
+				 from: "newUser"
 			};
 			server.connection.send(JSON.stringify(data));
 		}		

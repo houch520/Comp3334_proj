@@ -105,6 +105,8 @@ ws.on("request", function(request) {
     //Pathname format will be /un="Username"
     var pathname = request.resourceURL["pathname"];
     var username = pathname.split("=")[1];
+    console.log("pathname = ",pathname);
+    console.log("Username = ", username);
 
     //Send all the users online that the servers handles to the new connection
     if(clients.length!=0)
@@ -246,6 +248,8 @@ ws.on("request", function(request) {
         //Here we remove the connection and the corresponding client and 
         //broadcast the disconnection
         var index = getIndexofClient(id);
+        console.log("client index= ", id);
+        console.log("client = ", clients[index]);
     	// for(var i=0; i<clients.length;i++){
     	// 	if(clients[i].userID == id){
     	// 		index = i;
@@ -253,7 +257,7 @@ ws.on("request", function(request) {
     	// 	}
     	// }
     	//Message
-        //if (clients[index].uid!= -1){
+        if (typeof clients[index]!== "undefined"){
             var data = {
                 type: "disconnect",
                 msg: "User: "+clients[index].username+" has left",
@@ -264,12 +268,7 @@ ws.on("request", function(request) {
     
             console.log("[USERLOGOUT] ID: "+data.id+" has left the chatroom");
             doBroadcast(data);
-        //}
-        /*
-        else{
-            clients.splice(index,1); // Remove the client
-            connections.splice(id,1); //
-        }*/
+        }
     });
 });
 
