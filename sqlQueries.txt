@@ -1,7 +1,3 @@
-DROP TABLE Member;
-DROP TABLE User;
-DROP TABLE Chatroom;
-
 CREATE TABLE User (
   UserID varchar(70) NOT NULL,
   UserName varchar(20) NOT NULL,
@@ -11,18 +7,4 @@ CREATE TABLE User (
   last_login date NOT NULL,
 
   PRIMARY KEY (UserID)
-);
-
-CREATE TABLE Chatroom(
-    ChatroomID varchar(70) NOT NULL,
-    ChatroomName varchar(50) NOT NULL,
-
-    PRIMARY KEY(ChatroomID)
-);
-CREATE TABLE Member(
-    ChatroomID varchar(70) NOT NULL,
-    UserID varchar(70) NOT NULL,
-    admin boolean NOT NULL,
-    FOREIGN KEY (ChatroomID) REFERENCES Chatroom(ChatroomID),
-    FOREIGN KEY (UserID) REFERENCES User(UserID)
 );
